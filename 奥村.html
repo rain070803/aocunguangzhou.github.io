@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奥村光舟 | Okumura Koushuu - 钻石王牌</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blood-red: #DC2626;
+            --deep-black: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --seido-blue: #1e3a8a;
+            --silver: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--deep-black);
+            color: #e5e5e5;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--blood-red);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            background: rgba(220, 38, 38, 0.1);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.3s ease;
+        }
+
+        /* Noise Texture */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Baseball Stitch Pattern */
+        .stitch-border {
+            position: relative;
+        }
+        .stitch-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                var(--blood-red) 10px,
+                var(--blood-red) 20px
+            );
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+        }
+
+        .spotlight {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .number-04 {
+            font-size: 20rem;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(220, 38, 38, 0.3);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.5;
+            letter-spacing: -20px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--blood-red);
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .catcher-stance {
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stance-silhouette {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #2a2a3a 0%, #1a1a2e 100%);
+            clip-path: polygon(40% 0%, 60% 0%, 65% 20%, 70% 40%, 75% 60%, 80% 80%, 85% 100%, 15% 100%, 20% 80%, 25% 60%, 30% 40%, 35% 20%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .eye-glow {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: radial-gradient(ellipse, rgba(220,38,38,0.9) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 15%;
+            left: 35%;
+            box-shadow: 0 0 30px rgba(220,38,38,0.8);
+            animation: pulse 3s infinite;
+        }
+
+        .eye-glow:nth-child(2) {
+            left: 55%;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 100px 20px;
+            background: var(--charcoal);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            letter-spacing: 0.1em;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--blood-red);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(220, 38, 38, 0.5);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--silver);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .stat-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Radar Chart Container */
+        .radar-container {
+            max-width: 600px;
+            margin: 60px auto;
+            position: relative;
+        }
+
+        .radar-chart {
+            width: 100%;
+            aspect-ratio: 1;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            padding: 150px 20px;
+            background: var(--deep-black);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(220,38,38,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(30,58,138,0.1) 0%, transparent 50%);
+        }
+
+        .quote-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .quote-mark {
+            font-size: 8rem;
+            color: var(--blood-red);
+            opacity: 0.2;
+            line-height: 1;
+            margin-bottom: -40px;
+        }
+
+        .quote-text {
+            font-size: 2rem;
+            font-weight: 300;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+            margin-bottom: 30px;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .quote-jp {
+            font-size: 1.5rem;
+            color: var(--blood-red);
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            padding: 100px 20px;
+            background: var(--charcoal);
+        }
+
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--blood-red), transparent);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 60px;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+        }
+
+        .timeline-content {
+            max-width: 400px;
+            padding: 30px;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            margin: 0 30px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--blood-red);
+            border-radius: 50%;
+            top: 50%;
+            right: -40px;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            right: auto;
+            left: -40px;
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--blood-red);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        /* Relationships */
+        .relation-section {
+            padding: 100px 20px;
+            background: var(--deep-black);
+        }
+
+        .relation-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .relation-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            border-left: 4px solid var(--blood-red);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .relation-card:hover {
+            transform: translateX(10px);
+            background: linear-gradient(135deg, #1f1f3a 0%, #141426 100%);
+        }
+
+        .relation-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .relation-role {
+            font-size: 0.9rem;
+            color: var(--silver);
+            margin-bottom: 15px;
+        }
+
+        .relation-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        .relation-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--blood-red);
+            font-size: 0.75rem;
+            margin-top: 15px;
+            border-radius: 2px;
+        }
+
+        /* Catcher Stance Interactive */
+        .stance-section {
+            padding: 100px 20px;
+            background: var(--charcoal);
+            position: relative;
+        }
+
+        .stance-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .stance-visual {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .stance-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--blood-red);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+        }
+
+        .stance-point:hover {
+            transform: scale(1.5);
+            background: #fff;
+        }
+
+        .stance-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--blood-red);
+            padding: 15px;
+            max-width: 250px;
+            text-align: left;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .stance-point:hover + .stance-tooltip {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 20px;
+            background: #050505;
+            text-align: center;
+            border-top: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .footer-text {
+            color: #444;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--blood-red);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--blood-red); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .number-04 {
+                font-size: 12rem;
+            }
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 60px;
+                padding-right: 0;
+            }
+            .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                right: auto;
+            }
+        }
+
+        /* Parallax Layers */
+        .parallax-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .stitch-pattern {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(220, 38, 38, 0.03) 10px,
+                rgba(220, 38, 38, 0.03) 20px
+            );
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="stitch-pattern parallax-layer"></div>
+        </div>
+        <div class="spotlight" id="spotlight"></div>
+
+        <div class="hero-content">
+            <div class="number-04">04</div>
+            <div class="catcher-stance">
+                <div class="stance-silhouette">
+                    <div class="eye-glow"></div>
+                    <div class="eye-glow"></div>
+                </div>
+            </div>
+            <h1 class="hero-title">奥村光舟</h1>
+            <p class="hero-subtitle">Okumura Koushuu</p>
+            <p style="color: #666; letter-spacing: 0.1em; font-size: 0.9rem;">
+                SEIDO HIGH SCHOOL · CATCHER · BACK NUMBER 04
+            </p>
+        </div>
+
+        <div class="scroll-indicator">
+            <span style="font-size: 0.8rem; color: #666; letter-spacing: 0.2em;">SCROLL</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <h2 class="section-title fade-in">PLAYER DATA</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card fade-in">
+                <div class="stat-label">Position</div>
+                <div class="stat-value">捕手</div>
+                <div class="stat-desc">Catcher / 正捕手候補<br>右投右打</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <div class="stat-label">Back Number</div>
+                <div class="stat-value" style="color: var(--blood-red);">04</div>
+                <div class="stat-desc">一年生背号<br>青道高中棒球部</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <div class="stat-label">Physical</div>
+                <div class="stat-value">178cm</div>
+                <div class="stat-desc">身高178cm<br>金发淡蓝眼（绿瞳）</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <div class="stat-label">Nickname</div>
+                <div class="stat-value">小狼</div>
+                <div class="stat-desc">沢村赐名<br>孤高的一匹狼</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <div class="stat-label">Voice Actor</div>
+                <div class="stat-value">内田雄馬</div>
+                <div class="stat-desc">Yuuma Uchida<br>生日：2月20日</div>
+            </div>
+
+            <div class="stat-card fade-in">
+                <div class="stat-label">Former Team</div>
+                <div class="stat-value">大京</div>
+                <div class="stat-desc">大京中学棒球部<br>前主将兼正捕手</div>
+            </div>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="radar-container fade-in">
+            <svg class="radar-chart" viewBox="0 0 400 400">
+                <!-- Background Grid -->
+                <g transform="translate(200,200)">
+                    <!-- Pentagon backgrounds -->
+                    <polygon points="0,-150 142,-46 88,121 -88,121 -142,-46" fill="none" stroke="#333" stroke-width="1"/>
+                    <polygon points="0,-112 106,-34 66,90 -66,90 -106,-34" fill="none" stroke="#333" stroke-width="1"/>
+                    <polygon points="0,-75 71,-23 44,60 -44,60 -71,-23" fill="none" stroke="#333" stroke-width="1"/>
+                    <polygon points="0,-37 35,-11 22,30 -22,30 -35,-11" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <!-- Axis Lines -->
+                    <line x1="0" y1="0" x2="0" y2="-150" stroke="#333" stroke-width="1"/>
+                    <line x1="0" y1="0" x2="142" y2="-46" stroke="#333" stroke-width="1"/>
+                    <line x1="0" y1="0" x2="88" y2="121" stroke="#333" stroke-width="1"/>
+                    <line x1="0" y1="0" x2="-88" y2="121" stroke="#333" stroke-width="1"/>
+                    <line x1="0" y1="0" x2="-142" y2="-46" stroke="#333" stroke-width="1"/>
+
+                    <!-- Data Polygon (Okumura Stats) -->
+                    <polygon id="radar-polygon" points="0,-135 128,-41 79,109 -79,109 -128,-41" 
+                             fill="rgba(220,38,38,0.2)" stroke="#DC2626" stroke-width="3"/>
+
+                    <!-- Data Points -->
+                    <circle cx="0" cy="-135" r="5" fill="#DC2626"/>
+                    <circle cx="128" cy="-41" r="5" fill="#DC2626"/>
+                    <circle cx="79" cy="109" r="5" fill="#DC2626"/>
+                    <circle cx="-79" cy="109" r="5" fill="#DC2626"/>
+                    <circle cx="-128" cy="-41" r="5" fill="#DC2626"/>
+
+                    <!-- Labels -->
+                    <text x="0" y="-170" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">配球智商</text>
+                    <text x="170" y="-55" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">引导能力</text>
+                    <text x="105" y="150" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">反射神经</text>
+                    <text x="-105" y="150" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">领导气质</text>
+                    <text x="-170" y="-55" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">压迫感</text>
+                </g>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="quote-section">
+        <div class="quote-bg"></div>
+        <div class="quote-content fade-in">
+            <div class="quote-mark">"</div>
+            <p class="quote-jp">「甘い言葉は嫌いだ」</p>
+            <p class="quote-text" id="typewriter-text">我讨厌空洞的甜言蜜语。</p>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 20px;">
+                — 因中学时代被背叛的经历，对虚伪的温柔深恶痛绝
+            </p>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <h2 class="section-title fade-in">CAREER TIMELINE</h2>
+
+        <div class="timeline">
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">中学時代</div>
+                    <div class="timeline-title">大京中学主将</div>
+                    <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+                        担任大京中学棒球部主将兼正捕手，拥有卓越的棒球智商。因教练的背叛而留下心理阴影，从此厌恶虚伪的承诺。
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Act II 末尾</div>
+                    <div class="timeline-title">青道入学</div>
+                    <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+                        以成为正捕手为目标进入青道高中，与御幸一也同寝室。初次见面即宣示要夺取御幸的正捕手位置。
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">秋季大赛</div>
+                    <div class="timeline-title">替补席的凝视</div>
+                    <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+                        在秋季大赛期间从替补席观察学习，独特的低重心蹲捕姿势开始成型。与沢村荣纯建立微妙的竞争关系。
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">春季大赛</div>
+                    <div class="timeline-title">初登场</div>
+                    <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+                        春季大赛正式登场，展现与降谷晓、沢村荣纯的电池配合。以冷酷的配球和锐利的防守逐渐赢得信任。
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">现在</div>
+                    <div class="timeline-title">次世代正捕手</div>
+                    <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+                        作为青道高中棒球部次世代的正捕手候补，持续进化中。目标：超越御幸一也，成为日本第一捕手。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Relationships Section -->
+    <section class="relation-section">
+        <h2 class="section-title fade-in">RELATIONSHIPS</h2>
+
+        <div class="relation-grid">
+            <div class="relation-card fade-in">
+                <div class="relation-name">御幸一也</div>
+                <div class="relation-role">先輩捕手 /  roommate</div>
+                <div class="relation-desc">
+                    同寝室的前辈，青道现任正捕手。奥村明确表示"我会超越御幸"，这是他作为捕手的终极目标。两人之间存在着明确的竞争与传承关系。
+                </div>
+                <span class="relation-tag">TARGET TO SURPASS</span>
+            </div>
+
+            <div class="relation-card fade-in">
+                <div class="relation-name">沢村荣纯</div>
+                <div class="relation-role">投手 / 命名者</div>
+                <div class="relation-desc">
+                    赐予奥村"小狼"绰号的男人。两人从最初的冲突到逐渐理解，形成了独特的电池默契。
+                </div>
+                <span class="relation-tag">BATTERY PARTNER</span>
+            </div>
+
+            <div class="relation-card fade-in">
+                <div class="relation-name">降谷晓</div>
+                <div class="relation-role">投手 / 搭档</div>
+                <div class="relation-desc">
+                    与这位超高速投手形成强力电池。奥村是能够接住降谷全力投球的少数捕手之一。
+                </div>
+                <span class="relation-tag">POWER BATTERY</span>
+            </div>
+
+            <div class="relation-card fade-in">
+                <div class="relation-name">结城将司</div>
+                <div class="relation-role">同级生 / 竞争对手</div>
+                <div class="relation-desc">
+                    同为备受瞩目的一年级新生，结城是强打型外野手。虽然位置不同，但作为同届新星，两人在各自领域都是 immediate impact 的选手。
+                </div>
+                <span class="relation-tag">RIVAL</span>
+            </div>
+                        <div class="relation-card fade-in">
+                <div class="relation-name">由井薰</div>
+                <div class="relation-role">同级生捕手 / 同位置竞争者</div>
+                <div class="relation-desc">
+                    同为一年级的捕手，拥有出色的肩力和跑垒能力。与奥村的纯捕手路线不同，由井是打击型捕手。两人都在争夺御幸退役后的正捕手位置。
+                </div>
+                <span class="relation-tag">CATCHER RIVAL</span>
+            </div>
+
+
+            <div class="relation-card fade-in">
+                <div class="relation-name">片冈铁心</div>
+                <div class="relation-role">监督</div>
+                <div class="relation-desc">
+                    青道高中棒球部监督。认可奥村的才能，但也严格指导其作为捕手的成长。
+                </div>
+                <span class="relation-tag">MENTOR</span>
+            </div>
+
+            <div class="relation-card fade-in">
+                <div class="relation-name">太田部长</div>
+                <div class="relation-role">前辈</div>
+                <div class="relation-desc">
+                    青道高中OB，对奥村的冷酷气质和棒球才能给予高度评价的前辈。
+                </div>
+                <span class="relation-tag">SUPPORTER</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catcher Stance Section -->
+    <section class="stance-section">
+        <h2 class="section-title fade-in">CATCHER STANCE</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 40px;">
+            独特的低重心蹲捕姿势 · 奥村流
+        </p>
+
+        <div class="stance-container">
+            <div class="stance-visual" id="stance-visual">
+                <svg width="300" height="350" viewBox="0 0 300 350" style="opacity: 0.8;">
+                    <!-- Simplified Catcher Silhouette -->
+                    <path d="M150 50 
+                             Q180 50 190 80
+                             L200 120
+                             L210 160
+                             L220 200
+                             L230 280
+                             L240 340
+                             L200 340
+                             L190 280
+                             L180 220
+                             L150 220
+                             L120 220
+                             L110 280
+                             L100 340
+                             L60 340
+                             L70 280
+                             L80 200
+                             L90 160
+                             L100 120
+                             L110 80
+                             Q120 50 150 50Z" 
+                          fill="#1a1a2e" stroke="#DC2626" stroke-width="2"/>
+
+                    <!-- Glove -->
+                    <ellipse cx="150" cy="180" rx="40" ry="30" fill="#0f0f1a" stroke="#DC2626" stroke-width="2"/>
+
+                    <!-- Mask -->
+                    <rect x="130" y="60" width="40" height="35" rx="5" fill="none" stroke="#444" stroke-width="2"/>
+                    <line x1="135" y1="70" x2="165" y2="70" stroke="#444" stroke-width="1"/>
+                    <line x1="135" y1="77" x2="165" y2="77" stroke="#444" stroke-width="1"/>
+                    <line x1="135" y1="84" x2="165" y2="84" stroke="#444" stroke-width="1"/>
+                    <line x1="142" y1="65" x2="142" y2="90" stroke="#444" stroke-width="1"/>
+                    <line x1="150" y1="65" x2="150" y2="90" stroke="#444" stroke-width="1"/>
+                    <line x1="158" y1="65" x2="158" y2="90" stroke="#444" stroke-width="1"/>
+
+                    <!-- Eyes behind mask -->
+                    <circle cx="142" cy="77" r="4" fill="#DC2626" class="stance-eye"/>
+                    <circle cx="158" cy="77" r="4" fill="#DC2626" class="stance-eye"/>
+                </svg>
+
+                <!-- Interactive Points -->
+                <div class="stance-point" style="top: 20%; left: 50%;" data-info="低重心姿势：膝盖极度弯曲，重心压至极限，确保能瞬间起身阻挡本垒"></div>
+                <div class="stance-point" style="top: 50%; left: 50%;" data-info="手套位置：置于身体正前方最低处，准备接住任何角度的投球"></div>
+                <div class="stance-point" style="top: 35%; left: 30%;" data-info="护具配置：精简但坚固的护具，不影响灵活性的前提下提供最大防护"></div>
+                <div class="stance-point" style="top: 35%; left: 70%;" data-info="视线角度：透过面罩网格，视线与投手完美对齐，传达配球信号"></div>
+                <div class="stance-point" style="top: 75%; left: 40%;" data-info="腿部力量：如弹簧般压缩的腿部肌肉，随时准备爆发性移动"></div>
+                <div class="stance-point" style="top: 75%; left: 60%;" data-info="平衡感：即使在极限低姿势下也能保持完美平衡，这是奥村流的精髓"></div>
+            </div>
+
+            <div id="stance-info" style="max-width: 500px; margin: 30px auto; padding: 20px; background: rgba(220,38,38,0.1); border-left: 3px solid var(--blood-red); min-height: 80px;">
+                <p style="color: #888; font-size: 0.9rem;">点击上方红点查看蹲捕姿势解析</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">
+            DIAMOND NO ACE · OKUMURA KOUSHUU CHARACTER SITE<br>
+            <span style="color: #333;">© 寺嶋裕二 / 講談社 · ファンメイド非公式サイト</span>
+        </p>
+    </footer>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+
+            setTimeout(() => {
+                follower.style.left = e.clientX - 20 + 'px';
+                follower.style.top = e.clientY - 20 + 'px';
+            }, 100);
+        });
+
+        // Spotlight Effect
+        const spotlight = document.getElementById('spotlight');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX - 300;
+            const y = e.clientY - 300;
+            spotlight.style.left = x + 'px';
+            spotlight.style.top = y + 'px';
+        });
+
+        // Scroll Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Stance Interactive Points
+        const stancePoints = document.querySelectorAll('.stance-point');
+        const stanceInfo = document.getElementById('stance-info');
+
+        stancePoints.forEach(point => {
+            point.addEventListener('mouseenter', () => {
+                const info = point.getAttribute('data-info');
+                stanceInfo.innerHTML = `<p style="color: #fff; font-size: 1rem; line-height: 1.6;">${info}</p>`;
+                stanceInfo.style.borderColor = '#fff';
+            });
+
+            point.addEventListener('mouseleave', () => {
+                stanceInfo.style.borderColor = 'var(--blood-red)';
+            });
+        });
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.stitch-pattern');
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Typewriter Effect for Quote
+        const quotes = [
+            { jp: "「甘い言葉は嫌いだ」", cn: "我讨厌空洞的甜言蜜语。" },
+            { jp: "「俺は御幸を超える」", cn: "我会超越御幸。" },
+            { jp: "「黙って俺についてこい」", cn: "闭嘴跟着我就好。" }
+        ];
+
+        let quoteIndex = 0;
+        const jpElement = document.querySelector('.quote-jp');
+        const cnElement = document.getElementById('typewriter-text');
+
+        function rotateQuotes() {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            jpElement.style.opacity = 0;
+            cnElement.style.opacity = 0;
+
+            setTimeout(() => {
+                jpElement.textContent = quotes[quoteIndex].jp;
+                cnElement.textContent = quotes[quoteIndex].cn;
+                jpElement.style.opacity = 1;
+                cnElement.style.opacity = 1;
+                cnElement.classList.remove('typewriter');
+                void cnElement.offsetWidth;
+                cnElement.classList.add('typewriter');
+            }, 500);
+        }
+
+        setInterval(rotateQuotes, 6000);
+
+        // Eye Follow Mouse in Stance Section
+        const stanceVisual = document.getElementById('stance-visual');
+        const stanceEyes = document.querySelectorAll('.stance-eye');
+
+        stanceVisual.addEventListener('mousemove', (e) => {
+            const rect = stanceVisual.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width/2) / 20;
+            const y = (e.clientY - rect.top - rect.height/2) / 20;
+
+            stanceEyes.forEach(eye => {
+                eye.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Radar Chart Animation
+        const radarPolygon = document.getElementById('radar-polygon');
+        let radarAnimated = false;
+
+        const radarObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !radarAnimated) {
+                    radarAnimated = true;
+                    radarPolygon.style.transition = 'all 1s ease';
+                    radarPolygon.style.transform = 'scale(1)';
+                    radarPolygon.style.opacity = '1';
+                }
+            });
+        }, { threshold: 0.5 });
+
+        radarObserver.observe(document.querySelector('.radar-container'));
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Easter Egg: Konami Code
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            konamiCode = konamiCode.slice(-10);
+
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                document.body.style.filter = 'hue-rotate(180deg)';
+                setTimeout(() => {
+                    document.body.style.filter = 'none';
+                }, 3000);
+            }
+        });
+
+        // Dynamic Background on Mouse Move for Hero
+        const hero = document.querySelector('.hero');
+        hero.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            hero.style.background = `
+                radial-gradient(
+                    ellipse at ${x * 100}% ${y * 100}%,
+                    rgba(220,38,38,0.1) 0%,
+                    transparent 50%
+                ),
+                radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%)
+            `;
+        });
+    </script>
+</body>
+</html>

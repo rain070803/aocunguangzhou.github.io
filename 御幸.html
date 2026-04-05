@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>御幸一也 | MIYUKI KAZUYA - 钻石王牌</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --seido-blue: #1a237e;
+            --seido-dark: #0d1117;
+            --ace-gold: #ffd700;
+            --catcher-red: #e53935;
+            --dirt-brown: #8b4513;
+            --grass-green: #2e7d32;
+        }
+        
+        * {
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23ffd700' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5'/%3E%3Cpath d='M8.5 8.5v.01'/%3E%3Cpath d='M16 15.5v.01'/%3E%3Cpath d='M12 12v.01'/%3E%3Cpath d='M11 17v.01'/%3E%3Cpath d='M7 14v.01'/%3E%3C/svg%3E") 16 16, auto;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--seido-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .font-serif-jp {
+            font-family: 'Noto Serif JP', serif;
+        }
+        
+        .font-sports {
+            font-family: 'Black Ops One', cursive;
+        }
+        
+        /* 棒球场纹理背景 */
+        .bg-field {
+            background: 
+                linear-gradient(135deg, rgba(13,17,23,0.95) 0%, rgba(26,35,126,0.3) 100%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* 棒球缝线动画 */
+        @keyframes rotateBaseball {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .baseball-spin {
+            animation: rotateBaseball 8s linear infinite;
+        }
+        
+        /* 速度线效果 */
+        .speed-lines {
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 50px,
+                rgba(255, 215, 0, 0.1) 50px,
+                rgba(255, 215, 0, 0.1) 51px
+            );
+        }
+        
+        /* 捕手蹲姿呼吸动画 */
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .catcher-breathe {
+            animation: breathe 4s ease-in-out infinite;
+        }
+        
+        /* 文字拆解动画初始状态 */
+        .char-reveal {
+            opacity: 0;
+            transform: translateY(50px) rotateX(-90deg);
+        }
+        
+        /* 记分牌风格 */
+        .scoreboard {
+            background: #000;
+            border: 3px solid #333;
+            box-shadow: 
+                inset 0 0 20px rgba(0,0,0,0.8),
+                0 0 0 2px var(--ace-gold);
+        }
+        
+        .scoreboard-digit {
+            font-family: 'Black Ops One', cursive;
+            color: #ff6b35;
+            text-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        }
+        
+        /* 时间轴棒球缝线 */
+        .timeline-stitch {
+            background-image: repeating-linear-gradient(
+                to bottom,
+                #ffd700 0px,
+                #ffd700 8px,
+                transparent 8px,
+                transparent 16px
+            );
+            width: 3px;
+        }
+        
+        /* 配球手势按钮 */
+        .sign-btn {
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .sign-btn:hover {
+            border-color: var(--ace-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .sign-btn.active {
+            background: var(--ace-gold);
+            color: var(--seido-dark);
+        }
+        
+        /* 表情切换 */
+        .expression {
+            transition: opacity 0.5s ease;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--seido-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--seido-blue);
+            border-radius: 5px;
+        }
+        
+        /* 倾斜几何形状 */
+        .skew-box {
+            transform: skewX(-5deg);
+        }
+        
+        .skew-box > * {
+            transform: skewX(5deg);
+        }
+        
+        /* 霓虹文字效果 */
+        .neon-text {
+            text-shadow: 
+                0 0 5px rgba(255, 215, 0, 0.5),
+                0 0 10px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        /* 护具光泽效果 */
+        .gear-shine {
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.1) 0%,
+                transparent 50%,
+                rgba(255,215,0,0.1) 100%
+            );
+        }
+    </style>
+</head>
+<body class="bg-field min-h-screen">
+    
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50 bg-gradient-to-b from-black/80 to-transparent backdrop-blur-sm border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center border-2 border-yellow-400">
+                    <span class="font-sports text-yellow-400 text-lg">2</span>
+                </div>
+                <span class="font-serif-jp text-xl font-bold tracking-widest">青道高中</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm tracking-wider">
+                <a href="#profile" class="hover:text-yellow-400 transition-colors">PROFILE</a>
+                <a href="#abilities" class="hover:text-yellow-400 transition-colors">ABILITIES</a>
+                <a href="#quotes" class="hover:text-yellow-400 transition-colors">QUOTES</a>
+                <a href="#signals" class="hover:text-yellow-400 transition-colors">SIGNS</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- 背景速度线 -->
+        <div class="absolute inset-0 speed-lines opacity-30"></div>
+        
+        <!-- 动态背景粒子 -->
+        <div id="particles" class="absolute inset-0"></div>
+        
+        <!-- 捕手剪影背景 -->
+        <div class="absolute right-0 bottom-0 w-full md:w-2/3 h-full opacity-20 catcher-breathe">
+            <svg viewBox="0 0 400 600" class="w-full h-full" preserveAspectRatio="xMidYMax meet">
+                <defs>
+                    <linearGradient id="silhouetteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1a237e;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#0d1117;stop-opacity:0.3" />
+                    </linearGradient>
+                </defs>
+                <!-- 简化的捕手蹲姿剪影 -->
+                <path d="M200 100 
+                         C150 100, 120 150, 120 200
+                         C120 250, 100 300, 100 350
+                         C100 400, 120 450, 150 500
+                         L150 550
+                         C150 570, 170 580, 200 580
+                         C230 580, 250 570, 250 550
+                         L250 500
+                         C280 450, 300 400, 300 350
+                         C300 300, 280 250, 280 200
+                         C280 150, 250 100, 200 100
+                         Z" 
+                      fill="url(#silhouetteGrad)"/>
+                <!-- 面罩 -->
+                <circle cx="200" cy="140" r="35" fill="#e53935" opacity="0.6"/>
+                <path d="M170 140 L230 140 M200 110 L200 170 M185 125 L215 155 M215 125 L185 155" 
+                      stroke="#ffd700" stroke-width="3" opacity="0.8"/>
+            </svg>
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <!-- 背号装饰 -->
+            <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 opacity-10">
+                <span class="font-sports text-[20rem] text-white">2</span>
+            </div>
+            
+            <!-- 主标题 -->
+            <div class="mb-6">
+                <h1 class="font-serif-jp text-6xl md:text-9xl font-black mb-2 tracking-tighter">
+                    <span class="char-reveal inline-block">御</span>
+                    <span class="char-reveal inline-block">幸</span>
+                    <span class="char-reveal inline-block text-yellow-400">一</span>
+                    <span class="char-reveal inline-block text-yellow-400">也</span>
+                </h1>
+                <div class="h-1 w-32 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mx-auto my-6"></div>
+                <p class="font-sports text-2xl md:text-4xl tracking-[0.3em] text-blue-300 char-reveal">
+                    MIYUKI KAZUYA
+                </p>
+            </div>
+            
+            <!-- 副标题 -->
+            <div class="mt-8 inline-block skew-box bg-gradient-to-r from-blue-900/80 to-transparent px-8 py-4 border-l-4 border-yellow-400">
+                <p class="font-serif-jp text-xl md:text-2xl tracking-widest">
+                    青道高中野球部 <span class="text-yellow-400 mx-2">|</span> 正捕手 <span class="text-yellow-400 mx-2">|</span> 背号2
+                </p>
+            </div>
+            
+            <!-- 滚动提示 -->
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
+                <span class="text-xs tracking-widest text-gray-400">SCROLL</span>
+                <div class="w-6 h-10 border-2 border-yellow-400 rounded-full flex justify-center pt-2">
+                    <div class="w-1 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 旋转棒球装饰 -->
+        <div class="absolute top-20 right-10 w-16 h-16 baseball-spin opacity-30">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#ffd700" stroke-width="2"/>
+                <path d="M20 50 Q50 20 80 50" fill="none" stroke="#e53935" stroke-width="3"/>
+                <path d="M20 50 Q50 80 80 50" fill="none" stroke="#e53935" stroke-width="3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section id="profile" class="py-20 px-4 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- 左侧：角色立绘区 -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent rounded-lg"></div>
+                    <div class="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-8 border border-white/10">
+                        <!-- 护具展示 -->
+                        <div class="aspect-[3/4] relative overflow-hidden rounded-lg bg-gradient-to-b from-gray-700 to-gray-800">
+                            <div class="absolute inset-0 gear-shine"></div>
+                            <!-- 简化的御幸形象SVG -->
+                            <svg viewBox="0 0 300 400" class="w-full h-full">
+                                <defs>
+                                    <linearGradient id="uniformGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#1a237e"/>
+                                        <stop offset="100%" style="stop-color:#0d47a1"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- 身体 -->
+                                <rect x="100" y="150" width="100" height="150" fill="url(#uniformGrad)" rx="10"/>
+                                <!-- 护胸 -->
+                                <path d="M90 160 Q150 140 210 160 L210 280 Q150 300 90 280 Z" fill="#e53935" opacity="0.9"/>
+                                <path d="M100 170 Q150 155 200 170 L200 270 Q150 285 100 270 Z" fill="#b71c1c"/>
+                                <!-- 头部 -->
+                                <circle cx="150" cy="100" r="45" fill="#ffccbc"/>
+                                <!-- 头发 -->
+                                <path d="M105 90 Q120 60 150 55 Q180 60 195 90 Q200 110 190 120 L110 120 Q100 110 105 90" fill="#3e2723"/>
+                                <!-- 眼睛（眯笑） -->
+                                <path d="M125 105 Q135 110 145 105" fill="none" stroke="#3e2723" stroke-width="2"/>
+                                <path d="M155 105 Q165 110 175 105" fill="none" stroke="#3e2723" stroke-width="2"/>
+                                <!-- 笑容 -->
+                                <path d="M135 125 Q150 135 165 125" fill="none" stroke="#3e2723" stroke-width="2"/>
+                                <!-- 捕手面罩（挂在脖子上） -->
+                                <rect x="120" y="130" width="60" height="40" fill="#37474f" rx="5"/>
+                                <line x1="130" y1="140" x2="170" y2="160" stroke="#ffd700" stroke-width="2"/>
+                                <line x1="170" y1="140" x2="130" y2="160" stroke="#ffd700" stroke-width="2"/>
+                                <!-- 背号2 -->
+                                <text x="150" y="240" text-anchor="middle" fill="white" font-family="Black Ops One" font-size="40" opacity="0.8">2</text>
+                            </svg>
+                            
+                            <!-- 表情切换层 -->
+                            <div class="absolute top-10 right-10 w-20 h-20 bg-red-500/20 rounded-full blur-xl expression opacity-0" id="seriousExpr"></div>
+                        </div>
+                        
+                        <!-- 悬停提示 -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                             hover切换表情
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：数据面板 -->
+                <div class="space-y-6">
+                    <h2 class="font-serif-jp text-4xl font-bold mb-8 flex items-center gap-3">
+                        <span class="w-2 h-8 bg-yellow-400"></span>
+                        PLAYER DATA
+                        <span class="text-lg text-gray-400 font-normal">選手データ</span>
+                    </h2>
+                    
+                    <div class="scoreboard rounded-lg p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700">
+                                <p class="text-gray-400 text-xs mb-1">HEIGHT / 身長</p>
+                                <p class="scoreboard-digit text-3xl">180<span class="text-lg text-gray-400">cm</span></p>
+                            </div>
+                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700">
+                                <p class="text-gray-400 text-xs mb-1">WEIGHT / 体重</p>
+                                <p class="scoreboard-digit text-3xl">67<span class="text-lg text-gray-400">kg</span></p>
+                            </div>
+                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700">
+                                <p class="text-gray-400 text-xs mb-1">BIRTHDAY / 誕生日</p>
+                                <p class="text-2xl font-bold text-white">11.17</p>
+                                <p class="text-xs text-yellow-400">SCORPIO / 蠍座</p>
+                            </div>
+                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700">
+                                <p class="text-gray-400 text-xs mb-1">BLOOD / 血液型</p>
+                                <p class="scoreboard-digit text-3xl text-red-500">O</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 pt-4 mt-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-400 text-xs">THROWS / 投打</p>
+                                    <p class="text-xl font-bold">右投右打 <span class="text-sm text-gray-400">Right/Right</span></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-400 text-xs">POSITION / 守備</p>
+                                    <p class="text-2xl font-bold text-yellow-400 font-serif-jp">捕手</p>
+                                    <p class="text-sm text-gray-400">Catcher</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 角色标签 -->
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="px-4 py-2 bg-blue-900/50 border border-blue-500/30 rounded-full text-sm">青道高中3年</span>
+                        <span class="px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full text-sm text-yellow-400">主将候補</span>
+                        <span class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full text-sm text-red-400">腹黑</span>
+                        <span class="px-4 py-2 bg-purple-500/10 border border-purple-500/30 rounded-full text-sm text-purple-400">配球天才</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Abilities Section -->
+    <section id="abilities" class="py-20 px-4 bg-gradient-to-b from-transparent to-blue-900/20">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-serif-jp text-4xl font-bold text-center mb-16">
+                <span class="text-yellow-400">三</span>つの武器
+                <span class="block text-lg text-gray-400 mt-2 font-sans">THREE ABILITIES</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 能力1：配球 -->
+                <div class="ability-card group relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-8 border border-white/5 hover:border-yellow-400/50 transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-400/5 rounded-full blur-3xl group-hover:bg-yellow-400/10 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 mb-6 relative">
+                            <svg viewBox="0 0 64 64" class="w-full h-full">
+                                <circle cx="32" cy="32" r="30" fill="none" stroke="#ffd700" stroke-width="2"/>
+                                <path d="M20 32 L32 20 L44 32 L32 44 Z" fill="none" stroke="#ffd700" stroke-width="2"/>
+                                <circle cx="32" cy="32" r="4" fill="#ffd700"/>
+                                <path d="M32 10 L32 20 M32 44 L32 54 M10 32 L20 32 M44 32 L54 32" stroke="#ffd700" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-serif-jp text-2xl font-bold mb-2 text-yellow-400">狡智の配球</h3>
+                        <p class="text-sm text-gray-400 mb-4">TACTICAL GAME CALLING</p>
+                        <p class="text-gray-300 leading-relaxed">
+                            拥有卓越的棒球智商，能够精准解读打者心理。通过巧妙的配球引导投手，将对手的弱点彻底暴露。被誉为「能将任何投手的能力最大化」的天才捕手。
+                        </p>
+                        <div class="mt-6 pt-6 border-t border-white/10">
+                            <div class="flex items-center gap-2 text-sm text-yellow-400">
+                                <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                                心理戦のプロ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 能力2：守备 -->
+                <div class="ability-card group relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-8 border border-white/5 hover:border-red-500/50 transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl group-hover:bg-red-500/10 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 mb-6">
+                            <svg viewBox="0 0 64 64" class="w-full h-full">
+                                <path d="M32 10 L50 25 L50 50 L32 60 L14 50 L14 25 Z" fill="none" stroke="#e53935" stroke-width="2"/>
+                                <circle cx="32" cy="35" r="12" fill="none" stroke="#e53935" stroke-width="2"/>
+                                <path d="M24 35 L40 35 M32 27 L32 43" stroke="#e53935" stroke-width="3"/>
+                                <circle cx="32" cy="35" r="4" fill="#e53935"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-serif-jp text-2xl font-bold mb-2 text-red-400">鉄壁の守備</h3>
+                        <p class="text-sm text-gray-400 mb-4">IRON WALL DEFENSE</p>
+                        <p class="text-gray-300 leading-relaxed">
+                            拥有全国顶级的肩力与精准的阻杀技术。蹲姿低且稳，framing（接球手法）技术精湛，能够偷好球。本垒前的防守如铜墙铁壁，让跑者望而生畏。
+                        </p>
+                        <div class="mt-6 pt-6 border-t border-white/10">
+                            <div class="flex items-center gap-2 text-sm text-red-400">
+                                <span class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
+                                本塁死守
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 能力3：笑容 -->
+                <div class="ability-card group relative bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl p-8 border border-white/5 hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 mb-6">
+                            <svg viewBox="0 0 64 64" class="w-full h-full">
+                                <circle cx="32" cy="32" r="28" fill="none" stroke="#9c27b0" stroke-width="2"/>
+                                <path d="M20 28 Q24 24 28 28" fill="none" stroke="#9c27b0" stroke-width="2"/>
+                                <path d="M36 28 Q40 24 44 28" fill="none" stroke="#9c27b0" stroke-width="2"/>
+                                <path d="M22 38 Q32 48 42 38" fill="none" stroke="#9c27b0" stroke-width="2"/>
+                                <path d="M16 20 L20 24 M48 20 L44 24" stroke="#9c27b0" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-serif-jp text-2xl font-bold mb-2 text-purple-400">煽动する笑み</h3>
+                        <p class="text-sm text-gray-400 mb-4">PROVOCATIVE SMILE</p>
+                        <p class="text-gray-300 leading-relaxed">
+                            标志性的腹黑笑容，既是心理战的武器，也是队友安心的象征。看似轻浮实则深不可测，能在关键时刻说出最激励人心的话语，是青道精神的支柱。
+                        </p>
+                        <div class="mt-6 pt-6 border-t border-white/10">
+                            <div class="flex items-center gap-2 text-sm text-purple-400">
+                                <span class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></span>
+                                チームの心臓
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quotes Timeline Section -->
+    <section id="quotes" class="py-20 px-4 relative">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif-jp text-4xl font-bold text-center mb-16">
+                名<span class="text-yellow-400">言</span>集
+                <span class="block text-lg text-gray-400 mt-2 font-sans">LEGENDARY QUOTES</span>
+            </h2>
+            
+            <div class="relative">
+                <!-- 时间轴线 -->
+                <div class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 timeline-stitch"></div>
+                
+                <!-- 名言1 -->
+                <div class="quote-item relative pl-12 md:pl-0 md:grid md:grid-cols-2 gap-8 mb-12 items-center">
+                    <div class="md:text-right md:pr-12">
+                        <div class="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg border-r-4 border-yellow-400 shadow-xl relative">
+                            <div class="absolute -right-3 top-1/2 w-6 h-6 bg-yellow-400 rounded-full border-4 border-gray-900 hidden md:block" style="right: -1.65rem;"></div>
+                            <p class="font-serif-jp text-xl mb-2">「投げてこい、全力で」</p>
+                            <p class="text-sm text-gray-400 italic">"Throw it with everything you've got"</p>
+                            <p class="text-xs text-gray-500 mt-2">— 对泽村荣纯</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block"></div>
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-2 border-yellow-400 flex items-center justify-center z-10">
+                        <span class="text-xs">1</span>
+                    </div>
+                </div>
+                
+                <!-- 名言2 -->
+                <div class="quote-item relative pl-12 md:pl-0 md:grid md:grid-cols-2 gap-8 mb-12 items-center">
+                    <div class="hidden md:block"></div>
+                    <div class="md:pl-12">
+                        <div class="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg border-l-4 border-red-500 shadow-xl relative">
+                            <div class="absolute -left-3 top-1/2 w-6 h-6 bg-red-500 rounded-full border-4 border-gray-900 hidden md:block" style="left: -1.65rem;"></div>
+                            <p class="font-serif-jp text-xl mb-2">「お前の球、全部受け止めてやる」</p>
+                            <p class="text-sm text-gray-400 italic">"I'll catch every pitch you throw"</p>
+                            <p class="text-xs text-gray-500 mt-2">— 对降谷晓</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-2 border-red-500 flex items-center justify-center z-10">
+                        <span class="text-xs">2</span>
+                    </div>
+                </div>
+                
+                <!-- 名言3 -->
+                <div class="quote-item relative pl-12 md:pl-0 md:grid md:grid-cols-2 gap-8 mb-12 items-center">
+                    <div class="md:text-right md:pr-12">
+                        <div class="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg border-r-4 border-blue-500 shadow-xl relative">
+                            <div class="absolute -right-3 top-1/2 w-6 h-6 bg-blue-500 rounded-full border-4 border-gray-900 hidden md:block" style="right: -1.65rem;"></div>
+                            <p class="font-serif-jp text-xl mb-2">「勝つぞ、絶対に」</p>
+                            <p class="text-sm text-gray-400 italic">"We're going to win, absolutely"</p>
+                            <p class="text-xs text-gray-500 mt-2">— 夏季大会</p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block"></div>
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-2 border-blue-500 flex items-center justify-center z-10">
+                        <span class="text-xs">3</span>
+                    </div>
+                </div>
+                
+                <!-- 名言4 -->
+                <div class="quote-item relative pl-12 md:pl-0 md:grid md:grid-cols-2 gap-8 items-center">
+                    <div class="hidden md:block"></div>
+                    <div class="md:pl-12">
+                        <div class="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg border-l-4 border-purple-500 shadow-xl relative">
+                            <div class="absolute -left-3 top-1/2 w-6 h-6 bg-purple-500 rounded-full border-4 border-gray-900 hidden md:block" style="left: -1.65rem;"></div>
+                            <p class="font-serif-jp text-xl mb-2">「捕手は、投手の母親みたいなもんだ」</p>
+                            <p class="text-sm text-gray-400 italic">"A catcher is like a mother to the pitcher"</p>
+                            <p class="text-xs text-gray-500 mt-2">— 捕手哲学</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-2 border-purple-500 flex items-center justify-center z-10">
+                        <span class="text-xs">4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 配球信号互动区 -->
+    <section id="signals" class="py-20 px-4 bg-gradient-to-b from-blue-900/20 to-transparent">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="font-serif-jp text-4xl font-bold mb-4">
+                配球<span class="text-yellow-400">暗号</span>
+                <span class="block text-lg text-gray-400 mt-2 font-sans">PITCHING SIGNS</span>
+            </h2>
+            <p class="text-gray-400 mb-12">点击按钮查看御幸的经典配球手势</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <button class="sign-btn p-6 rounded-lg bg-gray-800/50" onclick="showSign('fastball')">
+                    <div class="text-4xl mb-2">☝️</div>
+                    <p class="font-bold">ストレート</p>
+                    <p class="text-xs text-gray-400">Fastball</p>
+                </button>
+                <button class="sign-btn p-6 rounded-lg bg-gray-800/50" onclick="showSign('curve')">
+                    <div class="text-4xl mb-2">✌️</div>
+                    <p class="font-bold">カーブ</p>
+                    <p class="text-xs text-gray-400">Curve</p>
+                </button>
+                <button class="sign-btn p-6 rounded-lg bg-gray-800/50" onclick="showSign('slider')">
+                    <div class="text-4xl mb-2">🤟</div>
+                    <p class="font-bold">スライダー</p>
+                    <p class="text-xs text-gray-400">Slider</p>
+                </button>
+                <button class="sign-btn p-6 rounded-lg bg-gray-800/50" onclick="showSign('change')">
+                    <div class="text-4xl mb-2">✋</div>
+                    <p class="font-bold">チェンジ</p>
+                    <p class="text-xs text-gray-400">Change-up</p>
+                </button>
+            </div>
+            
+            <!-- 信号显示区 -->
+            <div id="signDisplay" class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-8 border border-yellow-400/30 min-h-[200px] flex items-center justify-center">
+                <p class="text-gray-500">点击上方按钮查看配球指示</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 border-t border-white/10 bg-black/50">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-900 to-blue-700 flex items-center justify-center border-2 border-yellow-400">
+                    <span class="font-sports text-yellow-400 text-xl">2</span>
+                </div>
+                <div>
+                    <p class="font-serif-jp font-bold">青道高中野球部</p>
+                    <p class="text-xs text-gray-500">SEIDO HIGH SCHOOL BASEBALL CLUB</p>
+                </div>
+            </div>
+            
+            <div class="text-center md:text-right">
+                <p class="text-sm text-gray-400">© 寺嶋裕二・講談社 / 「ダイヤのA」製作委員会</p>
+                <p class="text-xs text-gray-600 mt-1">Diamond no Ace / Ace of Diamond</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 注册GSAP插件
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 文字拆解动画
+        gsap.to(".char-reveal", {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power4.out",
+            delay: 0.5
+        });
+        
+        // 滚动触发动画
+        gsap.from(".ability-card", {
+            scrollTrigger: {
+                trigger: "#abilities",
+                start: "top 80%",
+            },
+            y: 100,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+        
+        gsap.from(".quote-item", {
+            scrollTrigger: {
+                trigger: "#quotes",
+                start: "top 80%",
+            },
+            x: -50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.3,
+            ease: "power3.out"
+        });
+        
+        // 配球信号显示
+        function showSign(type) {
+            const display = document.getElementById('signDisplay');
+            const buttons = document.querySelectorAll('.sign-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const signs = {
+                fastball: {
+                    title: 'ストレート (Straight)',
+                    desc: '食指指天 - 最自信的决胜球，象征王牌的责任',
+                    color: 'text-yellow-400'
+                },
+                curve: {
+                    title: 'カーブ (Curve)',
+                    desc: 'V字手势 - 用来搅乱打者节奏的弯曲球路',
+                    color: 'text-blue-400'
+                },
+                slider: {
+                    title: 'スライダー (Slider)',
+                    desc: '金属礼手势 - 锐利的横向移动，打者的噩梦',
+                    color: 'text-red-400'
+                },
+                change: {
+                    title: 'チェンジアップ (Change-up)',
+                    desc: '五指张开 - 速差扰乱，心理战的极致体现',
+                    color: 'text-purple-400'
+                }
+            };
+            
+            const sign = signs[type];
+            display.innerHTML = `
+                <div class="text-center animate-pulse">
+                    <h3 class="font-serif-jp text-3xl font-bold ${sign.color} mb-4">${sign.title}</h3>
+                    <p class="text-xl text-gray-300 mb-4">${sign.desc}</p>
+                    <div class="mt-4 text-sm text-gray-500">御幸一也的配球哲学</div>
+                </div>
+            `;
+            
+            gsap.from(display, {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        }
+        
+        // 表情切换交互
+        const profileSection = document.querySelector('#profile');
+        const seriousExpr = document.getElementById('seriousExpr');
+        
+        profileSection.addEventListener('mouseenter', () => {
+            seriousExpr.style.opacity = '1';
+        });
+        
+        profileSection.addEventListener('mouseleave', () => {
+            seriousExpr.style.opacity = '0';
+        });
+        
+        // 粒子背景效果
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'absolute w-1 h-1 bg-yellow-400/20 rounded-full';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `float ${5 + Math.random() * 10}s linear infinite`;
+                container.appendChild(particle);
+            }
+        }
+        
+        // 添加浮动动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(-100vh) translateX(${Math.random() * 100 - 50}px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        createParticles();
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
